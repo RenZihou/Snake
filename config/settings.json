@@ -1,0 +1,16 @@
+{
+  "background_color": "FFFFFF",
+  "snake_color": "0434EC",
+  "wall_color": "000000",
+  "fruit_color": "EC0404",
+  "plane_width": 40,
+  "plane_height": 40,
+  "pixel_per_grid": 20,
+  "fruit_prob": 0.6,
+  "fruit_prob_dec": 0.08,
+  "fruit_bonus": 3,
+  "init_len": 2,
+  "init_speed": 2,
+  "fruit_speedup": 1.2,
+  "max_speed": 12
+}
