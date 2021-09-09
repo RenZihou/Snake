@@ -8,7 +8,15 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-set(CMAKE_PREFIX_PATH "YOUR_QT_CMAKE_PATH_HERE")
+execute_process(COMMAND where qmake OUTPUT_VARIABLE QT_INSTALL_PATH)
+string(REGEX REPLACE "\n$" "/../.." QT_INSTALL_PATH ${QT_INSTALL_PATH})
+string(REGEX REPLACE "\\\\" "/" QT_INSTALL_PATH ${QT_INSTALL_PATH})
+set(CMAKE_PREFIX_PATH "${QMAKE_PATH}/lib/cmake")
+
+set(CMAKE_CXX_FLAGS "-Wall")
+if (CMAKE_BUILD_TYPE MATCHES "Release")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mwindows")
+endif ()
 
 include(FetchContent)
 FetchContent_Declare(json
@@ -33,12 +41,11 @@ add_executable(${PROJECT_NAME}
         src/mainwindow.cpp src/mainwindow.h src/mainwindow.ui
         src/gameplane.cpp src/gameplane.h src/gameplane.ui src/ActionButton.cpp src/ActionButton.h)
 
-target_link_libraries(QT_Learn_new
+target_link_libraries(${PROJECT_NAME}
         Qt::Core
         Qt::Gui
         Qt::Widgets
-        nlohmann_json::nlohmann_json
-        )
+        nlohmann_json::nlohmann_json)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 
@@ -47,7 +54,7 @@ if (WIN32)
 #    if (CMAKE_BUILD_TYPE MATCHES "Debug")
 #        set(DEBUG_SUFFIX "d")
 #    endif ()
-    set(QT_INSTALL_PATH "${CMAKE_PREFIX_PATH}")
+#    set(QT_INSTALL_PATH "${CMAKE_PREFIX_PATH}")
     if (NOT EXISTS "${QT_INSTALL_PATH}/bin")
         set(QT_INSTALL_PATH "${QT_INSTALL_PATH}/..")
         if (NOT EXISTS "${QT_INSTALL_PATH}/bin")
