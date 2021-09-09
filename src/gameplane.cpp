@@ -12,6 +12,7 @@
 
 #include <QFileDialog>
 #include <QDebug>
+#include <QPainterPath>
 
 void to_json(json &j, const Point &p) {
     std::vector<int> cord{p.x, p.y};
@@ -24,14 +25,16 @@ void from_json(const json &j, Point &p) {
 }
 
 GamePlane::GamePlane(QWidget *parent) :
-        QWidget(parent), ui(new Ui::GamePlane), timer(new QTimer(this)),
-        width(static_cast<int>(Config::config().get_num_setting("plane_width")) + 2),
-        height(static_cast<int>(Config::config().get_num_setting("plane_height")) + 2),
+        QWidget(parent), 
         pixel(static_cast<int>(Config::config().get_num_setting("pixel_per_grid"))),
         fruit_bonus(static_cast<int>(Config::config().get_num_setting("fruit_bonus"))),
-        speed(Config::config().get_num_setting("init_speed")),
         speedup(Config::config().get_num_setting("fruit_speedup")),
-        max_speed(Config::config().get_num_setting("max_speed")) {
+        max_speed(Config::config().get_num_setting("max_speed")),
+        width(static_cast<int>(Config::config().get_num_setting("plane_width")) + 2),
+        height(static_cast<int>(Config::config().get_num_setting("plane_height")) + 2),
+        speed(Config::config().get_num_setting("init_speed")),
+        timer(new QTimer(this)),
+        ui(new Ui::GamePlane) {
     std::random_device rd{};
     // this->mt = new std::mt19937(rd());
     // ==== NOTICE begin ====
@@ -161,7 +164,8 @@ void GamePlane::keyPressEvent(QKeyEvent *event) {
 void GamePlane::mousePressEvent(QMouseEvent *event) {
     if (phase != INIT) return;
     if (event->button() == Qt::LeftButton) {
-        Point press = {.x=event->x() / pixel, .y=event->y() / pixel};
+        Point press = {.x=static_cast<int>(event->position().x()) / pixel, 
+                       .y=static_cast<int>(event->position().y()) / pixel};
         if (press.x == 0 || press.y == 0 || press.x == width - 1 || press.y == width - 1) return;
         for (auto it = wall.begin(); it != wall.end(); ++it) {
             if (*it == press) {
